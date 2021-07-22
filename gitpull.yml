@@ -1,0 +1,25 @@
+- name: Pulling git code to ansible slave node
+  hosts: anotherinstance18.04
+  remote_user: ubuntu
+  sudo: yes
+  
+  tasks:
+  - name: Checking for Main App Directory
+    stat:
+      path: '/home/ubuntu/FlaskAppCRUD-main'
+    register: CRUDApp
+
+  - name: Condition to check if directory exists! 
+    debug:
+      msg: 'Git directory exists hence not cloning'
+    when: CRUDApp.stat.exists and CRUDApp.stat.isdir
+
+  - name: Condition to check if directory not exists!
+    command: git clone "https://github.com/akjain96/FlaskAppCRUD-main.git"
+    when: not (CRUDApp.stat.exists and CRUDApp.stat.isdir)
+  
+  - name: Fetching latest changes
+    command: git fetch --all
+    command: git pull
+    args:
+      chdir: /home/ubuntu/FlaskAppCRUD-main
