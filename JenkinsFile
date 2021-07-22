@@ -1,0 +1,25 @@
+pipeline {
+    agent any 
+    stages {
+        stage('Fetch GIT Repo from Github') { 
+            steps {
+                git branch: 'main', credentialsId: '410d1f42-6536-4862-b183-d9dfa74717b9', url: 'https://github.com/akjain96/DeployPythonAppFinal'
+            }
+        }
+        stage('Doing package installation on host') { 
+            steps {
+                ansiblePlaybook disableHostKeyChecking: true, installation: 'ansible', inventory: 'dev.inv', playbook: 'installation.yml'
+            }
+        }
+        stage('Creating GIT Repo of application') { 
+            steps {
+                ansiblePlaybook disableHostKeyChecking: true, installation: 'ansible', inventory: 'dev.inv', playbook: 'gitpull.yml'
+            }
+        }
+        stage('Deploying app finally through docker compose') { 
+            steps {
+                ansiblePlaybook disableHostKeyChecking: true, installation: 'ansible', inventory: 'dev.inv', playbook: 'pydockerimagebuild.yml'
+            }
+        }
+    }
+}
