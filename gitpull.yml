@@ -1,7 +1,7 @@
 - name: Pulling git code to ansible slave node
   hosts: anotherinstance18.04
   remote_user: ubuntu
-  sudo: yes
+  become: yes
   
   tasks:
   - name: Checking for Main App Directory
@@ -19,7 +19,6 @@
     when: not (CRUDApp.stat.exists and CRUDApp.stat.isdir)
   
   - name: Fetching latest changes
-    command: git fetch --all
     command: git pull
     args:
       chdir: /home/ubuntu/FlaskAppCRUD-main
