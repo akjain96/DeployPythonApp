@@ -51,14 +51,6 @@
       state: started
       enabled: yes
 
-  - name: Test Docker with hello world example
-    shell: "docker run hello-world"
-    register: hello_world_output
-
-  - name: Show output of hello world example
-    debug:
-      msg: "Container Output: {{hello_world_output.stdout}}"
-
   - name: Add remote "ubuntu" user to "docker" group
     remote_user: ubuntu
     user:
@@ -74,8 +66,3 @@
       url : https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
       dest: /usr/local/bin/docker-compose
       mode: 'u+x,g+x'
-      
-  - name: Reboot server in order for changes to take place
-    shell: "sleep 1 && reboot"
-    async: 1
-    poll: 0
