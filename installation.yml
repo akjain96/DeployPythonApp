@@ -1,0 +1,68 @@
+- name: Update ansible slave node with python and pip
+  hosts: anotherinstance18.04
+  remote_user: ubuntu
+  become: yes
+
+  tasks:
+  - name: Install Python3 latest version
+    apt:
+      name: python3
+      state: present
+
+  - name: Install Git
+    apt: 
+      name: git
+      state: present
+
+  - name: Install python3-apt
+    apt:  
+      name: python3-apt
+      state: present
+
+  - name: Install python setuptools 
+    apt:  
+      name: python3-setuptools
+      state: present
+
+  - name: Update apt packages
+    apt:
+      update_cache: "yes"
+      cache_valid_time: 3600
+
+  - name: add docker apt key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: add docker apt repo
+    apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu bionic stable
+      state: present
+
+  - name: install docker and it's dependencies
+    apt:
+      name: docker-ce
+      update_cache: yes
+      state: latest
+
+  - name: start and enable docker daemon
+    service:
+      name: docker
+      state: started
+      enabled: yes
+
+  - name: Add remote "ubuntu" user to "docker" group
+    remote_user: ubuntu
+    user:
+      name: "ubuntu"
+      group: "docker"
+      append: yes
+    tags:
+      - docker
+
+  - name: Install docker-compose
+    remote_user: ubuntu
+    get_url: 
+      url : https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
+      dest: /usr/local/bin/docker-compose
+      mode: 'u+x,g+x'

@@ -1,0 +1,11 @@
+- name: Making Docker Image from DockerFile
+  hosts: anotherinstance18.04
+  remote_user: ubuntu
+  become: yes
+  
+  tasks:
+  - name: Creating docker containers
+    command: 
+      cmd: docker-compose up --detach
+    args:
+      chdir: /home/ubuntu/FlaskAppCRUD-main
